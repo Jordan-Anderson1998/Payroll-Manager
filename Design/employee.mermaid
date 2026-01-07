@@ -1,0 +1,37 @@
+classDiagram
+
+    Enforcer <|-- ABC
+    IntEnforcer <|-- Enforcer
+    StringEnforcer <|-- Enforcer
+
+    class Enforcer{
+
+%%        implement the descriptor protocol
+        +__set__()
+        +__get__()
+        +__set_name__()
+%%      abstract method
+        +verify(value) -> bool
+
+    }
+
+    class IntEnforcer{
+        +verify() -> bool
+    }
+
+    class StringEnforcer{
+        +verify() -> bool
+
+    }
+
+    class Employee{
+        +String Name
+        +String Address
+        +Int Age
+        +Bool Eligible_to_work
+        +String Employee_ID
+        -String social_security_number
+
+        +is_fit_to_work() -> bool
+
+    }

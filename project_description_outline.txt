@@ -1,0 +1,9 @@
+Design and build a system that allows an employee to be entered and their payroll to be calculated.
+
+Project will be built with Test Driven Development.
+
+1. Form to add employee
+2. Form to calculate their pay based on hours worked, hourly wage
+3. Connect database so that every employee and their information gets added to the database when entered
+
+Employee object needs descriptors or properties to restrict the types of information that can be entered into each field.
