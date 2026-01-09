@@ -5,7 +5,7 @@ import doctest
 from random import randint
 import logging
 from logging import getLogger
-
+import warnings
 """
 NOTSET 0 
 indicates that ancestor loggers are to be consulted to determine the effective level. 
@@ -156,7 +156,7 @@ class AgeEnforcer(Enforcer):
             (:type)
 
         Examples:
-              TODO Incomplete doctest
+              >>> a = AgeEnforcer()
               >>> a.verify(18)
               True
               >>> a.verify(60)
@@ -188,7 +188,7 @@ class NameEnforcer(Enforcer):
             (:type)
 
         Examples:
-              TODO Incomplete doctest
+              >>> n = NameEnforcer()
               >>> n.verify('Joe')
               True
               >>> n.verify('Jordan')
@@ -209,7 +209,6 @@ class EmailEnforcer(Enforcer):
     def verify(self, value: str) -> bool:
         """ Use regex to validate email address.
             regex pattern:
-
             ^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$
             Examples:
             Valid:
@@ -233,6 +232,7 @@ class EmailEnforcer(Enforcer):
             (:obj bool)
 
         Examples:
+              >>> e = EmailEnforcer()
               >>> e.verify('jordan.anderson@gmail.com')
               True
               >>> e.verify('joeblow@hotmail.ca')
@@ -242,6 +242,7 @@ class EmailEnforcer(Enforcer):
               >>> e.verify('notanemail!!__')
               False
         """
+        ## TODO getting syntax warning  "\." is an invalid escape sequence. Such sequences will not work in the future. Did you mean "\\."? A raw string is also an option.
         email_pattern = re.compile(r'^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$')
 
         return True if email_pattern.match(value) else False
@@ -267,7 +268,7 @@ class PostalCodeEnforcer(Enforcer):
             (:type)
 
         Examples:
-              TODO Incomplete doctest
+              >>> pc = PostalCodeEnforcer()
               >>> pc.verify('S4S 0A2')
               True
               >>> pc.verify('S0H 3G0')
@@ -315,10 +316,16 @@ class Employee:
 
 
 if __name__ == '__main__':
-    doctest.testmod(extraglobs={'pc': PostalCodeEnforcer(),
-                                'e': EmailEnforcer(),
-                                'n': NameEnforcer(),
-                                'a': AgeEnforcer(),})
+
+    # another way of testing the classes without having to instantiate an instance each time
+    # doctest.testmod(extraglobs={'pc': PostalCodeEnforcer(),
+    #                             'e': EmailEnforcer(),
+    #                             'n': NameEnforcer(),
+    #                             'a': AgeEnforcer(),})
+
+    # ignore syntax warning for regex
+    # warnings.filterwarnings('ignore')
+    doctest.testmod()
 
     jordan = Employee(age=27, name="Jordan", email="jordan.anderson@gmail.com", postal_code="S4S 0A2")
     jordan.make_new_employee_id(10)
