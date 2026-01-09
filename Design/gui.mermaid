@@ -1,0 +1,45 @@
+classDiagram
+
+    View <|-- TkFrame
+    App <|-- Tk
+
+    class Model{
+
+        +  PayrollHub payroll_hub
+        + add_payroll_hub()
+
+ }
+
+    class View{
+        + ttk.Entry employee_lookup
+        + ttk.Button search_for_employee
+        + ttk.Entry add_new_employee
+        + ttk.Button add_new_employee
+        + ttk.ListBox employee_currently_selected
+        + ttk.Entry add_new_hourly_wage
+        + ttk.Button add_new_hourly_wage
+        + tkk.Entry add_weekly_hours
+        + ttk.Button add_weekly_hours
+        + ttk.Button calculate_weekly_pay
+        + ttk.ListBox display_employee_weekly_pay
+        + add_controller()
+    }
+
+    class Controller{
+        + View view
+        + Model model
+
+%%        Controller is going to rely on the Model to handle the calculations for updating an employee's payroll information
+        + search_for_employee_click_event_handler()
+        + add_new_employee_click_event_handler()
+        + add_new_hourly_wage_click_event_handler()
+        + add_weekly_hours_click_event_handler()
+        + calculate_weekly_pay_click_event_handler()
+
+    }
+
+    class App{
+
+        + String screen_dimensions
+        + String title
+    }
