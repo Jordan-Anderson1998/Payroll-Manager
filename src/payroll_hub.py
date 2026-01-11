@@ -5,6 +5,8 @@ import logging
 from logging import getLogger
 # import clr
 
+from tools.decorators.deco import output_transformer
+
 """
 NOTSET 0 
 indicates that ancestor loggers are to be consulted to determine the effective level. 
@@ -104,6 +106,7 @@ class PayrollHub:
         self.employee_list:list = []
         self.database_table_name:str|None = None
 
+    @output_transformer(str.upper)
     def add_employee(self, employee:Employee) -> str:
         self.employee_list.append(employee)
         logger.info(f'Added employee: {employee} to employee list')
