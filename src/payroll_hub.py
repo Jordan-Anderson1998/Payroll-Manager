@@ -1,10 +1,10 @@
-from employee import Employee
 import os
 import sqlite3
 import logging
 from logging import getLogger
 # import clr
 
+from src.employee import Employee
 from tools.decorators.deco import output_transformer
 
 """
