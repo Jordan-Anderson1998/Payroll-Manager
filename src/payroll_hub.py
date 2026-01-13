@@ -103,7 +103,7 @@ CRITICAL
 
 class PayrollHub:
     def __init__(self):
-        self.employee_list:list = []
+        self.employee_list:list[Employee] = []
         self.database_table_name:str|None = None
 
     @output_transformer(str.upper)
