@@ -265,55 +265,77 @@ class View(tk.Frame):
 
         # widgets
         self.employee_lookup_label = ttk.Label(text='Search for Employee')
-        self.employee_lookup_label.grid(row=0, column=0)
+        # self.employee_lookup_label.pack()
+        self.employee_lookup_label.grid(padx=10, pady=10)
+        self.employee_lookup_label.place(x=25, y=0)
 
         self.employee_lookup_entry = ttk.Entry(self)
-        self.employee_lookup_entry.grid(row=1, column=0, sticky="ew")
+        # self.employee_lookup_entry.place(x=0, y=50)
+        # self.employee_lookup_entry.pack()
+        self.employee_lookup_entry.grid(padx=10, pady=10)
 
-        self.employee_lookup_button = ttk.Button(self, command=self.employee_lookup)
-        self.employee_lookup_button.grid(row=1, column=1)
+        self.employee_lookup_button = ttk.Button(self, command=self.employee_lookup, text='Submit')
+        # self.employee_lookup_button.pack()
+        self.employee_lookup_button.grid(row=1, column=2, padx=5, pady=5)
+        # self.employee_lookup_button.place(x=0, y=100)
+
 
         self.add_new_employee_label = ttk.Label(text='Add New Employee')
-        self.add_new_employee_label.grid(row=2, column=0)
+        # self.add_new_employee_label.place(x=0, y=0)
+        #
+        # self.add_new_employee_label.pack(side='left')
+        self.add_new_employee_label.grid(padx=10, pady=10)
+        self.add_new_employee_label.place(x=25, y=125)
+        #
+        self.add_new_employee_button = ttk.Button(self, command=self.add_new_employee, text='Submit')
+        # self.add_new_employee_button.place(x=0, y=100)
+        # self.add_new_employee_button.pack()
+        self.add_new_employee_button.grid(row=2, column=2, padx=10, pady=10)
+        # self.add_new_employee_button.place(x=75, y=55)
 
-        self.add_new_employee_button = ttk.Button(self, command=self.add_new_employee)
-        self.add_new_employee_button.grid(row=2, column=1)
-
+        #
         self.add_new_employee_entry = ttk.Entry(self)
-        self.add_new_employee_entry.grid(row=2, column=2)
-
+        # self.add_new_employee_entry.place(x=0, y=150)
+        # self.add_new_employee_entry.pack()
+        self.add_new_employee_entry.grid(padx=10, pady=10)
+        #
         self.current_employee_label = ttk.Label(text='Current Employee')
-        self.current_employee_label.grid(row=3, column=0)
+
+        self.current_employee_label.grid(padx=10, pady=10)
+        self.current_employee_label.place(x=25, y=175)
 
         self.current_employee_selected = tk.Listbox(self)
-        self.current_employee_selected.grid(row=4, column=0)
+        self.current_employee_selected.grid(padx=10, pady=10)
 
         self.add_new_hours_label = ttk.Label(text='Add New Hours')
-        self.add_new_hours_label.grid(row=5, column=0)
+        self.add_new_hours_label.grid(padx=10, pady=10)
+        self.add_new_hours_label.place(x=25, y=350)
 
         self.add_new_hourly_wage_for_employee_entry = ttk.Entry(self)
-        self.add_new_hourly_wage_for_employee_entry.grid(row=6, column=0)
+        self.add_new_hourly_wage_for_employee_entry.grid(padx=10, pady=10)
 
-        self.add_new_hourly_wage_for_employee_button = ttk.Button(self, command=self.add_new_hourly_wage_for_employee)
-        self.add_new_hourly_wage_for_employee_button.grid(row=6, column=1)
+        self.add_new_hourly_wage_for_employee_button = ttk.Button(self, text='Submit', command=self.add_new_hourly_wage_for_employee)
+        self.add_new_hourly_wage_for_employee_button.grid(padx=10, pady=10)
 
         self.add_weekly_hours_label = ttk.Label(text='Add Weekly Hours')
-        self.add_weekly_hours_label.grid(row=7, column=0)
+        self.add_weekly_hours_label.grid(padx=10, pady=10)
+        self.add_weekly_hours_label.place(x=25, y=435)
 
         self.add_weekly_hours_for_employee_entry = ttk.Entry(self)
-        self.add_weekly_hours_for_employee_entry.grid(row=8, column=0)
+        self.add_weekly_hours_for_employee_entry.grid(padx=10, pady=10)
 
-        self.add_weekly_hours_for_employee_button = ttk.Button(self, command=self.add_weekly_hours_for_employee)
-        self.add_weekly_hours_for_employee_button.grid(row=8, column=1)
+        self.add_weekly_hours_for_employee_button = ttk.Button(self, command=self.add_weekly_hours_for_employee, text='Submit')
+        self.add_weekly_hours_for_employee_button.grid(padx=10, pady=10)
 
         self.calculate_weekly_pay_label = ttk.Label(text='Calculate Weekly Pay')
-        self.calculate_weekly_pay_label.grid(row=9, column=0)
+        self.calculate_weekly_pay_label.grid(padx=10, pady=10)
+        self.calculate_weekly_pay_label.place(x=25, y=520)
 
-        self.calculate_weekly_pay_button = ttk.Button(self, command=self.calculate_weekly_pay)
-        self.calculate_weekly_pay_button.grid(row=10, column=1)
+        self.calculate_weekly_pay_button = ttk.Button(self, command=self.calculate_weekly_pay, text='Submit')
+        self.calculate_weekly_pay_button.grid(padx=10, pady=10)
 
         self.weekly_pay_owed = tk.Listbox(self)
-        self.weekly_pay_owed.grid(row=10, column=2)
+        self.weekly_pay_owed.grid(padx=10, pady=10)
 
     def add_controller(self, controller: Controller):
         self.controller = controller
@@ -363,7 +385,8 @@ class App(Tk):
         model = Model()
         model.add_hub(hub=PayrollHub())
         view = View(self)
-        view.grid(row=0, column=0, sticky="nsew")
+        view.grid(row=0, column=0, padx=10, pady=10)
+        # view.grid(row=0, column=0, sticky="nsew")
         controller = Controller(model, view)
 
         view.add_controller(controller)
