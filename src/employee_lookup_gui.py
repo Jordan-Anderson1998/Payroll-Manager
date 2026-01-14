@@ -151,15 +151,16 @@ class Controller:
                 logger.debug(f'Employee found: {employee_check}')
                 self.employee = employee
                 view.current_employee_selected.insert(tk.END, employee_check)
-                messagebox.showinfo(f'Found employee {employee_check}')
+                messagebox.showinfo(message='Found employee {employee_check}')
                 self._found_employee = True
         else:
             logger.debug(f'Employee: {employee_check} not found in employee list: {hub.employee_list}')
             view.current_employee_selected.insert(tk.END, f'Employee {employee_check} not found')
-            messagebox.showinfo(f'Employee {employee_check} not found')
+            # messagebox.showinfo('Employee Not Found')
+            messagebox.showinfo(message=f'Employee {employee_check} not found')
             self._found_employee = False
 
-    def find_new_employee_click_event_handler(self):
+    def add_new_employee_click_event_handler(self) -> None:
         """ Enable the button to add an employee if employee is found in records, else button is disabled.
             If button is pressed, append emplyoee to central hub records.
 
@@ -183,16 +184,30 @@ class Controller:
         hub = self.model.hub
 
         if not self._found_employee:
-            view.add_new_employee_button.state(tk.DISABLED)
-            messagebox.showinfo('Did not find employee')
+            view.add_new_employee_button.state = tk.DISABLED
+            logger.debug(f'Button state = {view.add_new_employee_button.state}')
+            messagebox.showerror(message='Did not find employee')
             logger.info('Button to add employee is disabled because employee was not found.')
         else:
             # hub.add_employee(view.current_employee_selected.get(tk.END))
-            view.add_new_employee_button.state(tk.ACTIVE)
-            messagebox.showinfo('Found employee')
-            logger.debug(f'Employee: {view.current_employee_selected.get(tk.END)} added to employee list')
+            view.add_new_employee_button.state = tk.ACTIVE
+            logger.debug(f'Button state = {view.add_new_employee_button.state}')
+            messagebox.showinfo(message='Found employee')
+            logger.info(f'Employee: {view.current_employee_selected.get(tk.END)} added to employee list')
 
-    def add_weekly_hours_click_event_handler(self):
+    def add_new_hourly_wage_click_event_handler(self) -> None:
+        employee = self.employee
+        view = self.view
+
+        if self._found_employee:
+            # add new field hourly wage
+            employee.hourly_wage = int(view.add_new_hourly_wage_for_employee_entry.get())
+            logger.info(f'Hourly wage: {employee.hourly_wage} added to employee: {employee.name}')
+        else:
+            logger.info('Employee not found in employee list')
+            messagebox.showerror(message='No employee found')
+
+    def add_weekly_hours_click_event_handler(self) -> None:
         """ If employee is found in records, add a new attribute to employee 'hours' that contains the hours inputted.
 
         Args:
@@ -218,6 +233,10 @@ class Controller:
         if self._found_employee:
             # add new field hours to employee
             employee.hours = int(view.add_weekly_hours_for_employee_entry.get())
+            logger.info(f'Hours: {employee.hours} added to employee: {employee.name}')
+        else:
+            logger.info(f'Employee not found')
+            messagebox.showerror(message='No employee found')
 
     def calculate_weekly_pay_click_event_handler(self):
         employee = self.employee
@@ -226,13 +245,18 @@ class Controller:
 
         if self._found_employee:
             try:
-                employee_with_pay = hub.calculate_payroll(employee, employee.hours, self._minimum_wage)
+                employee_with_pay = hub.calculate_payroll(employee, employee.hours, employee.hourly_wage)
                 view.weekly_pay_owed.insert(tk.END, str(employee_with_pay.payout))
             except AttributeError:
+                # if employee hours or employee hourly_wage does not exist
                 logger.warning(f'{employee.name} does not have their hours in the system yet or is not eligible for pay \n employee might not have an employee ID.')
                 logger.debug(f'{employee.name} eligible to work: {employee.is_eligible_to_work()}')
 
-    def make_new_employee_id(self, num_of_chars: int):
+        else:
+            logger.info(f'employee not found')
+            messagebox.showerror(message='No employee found')
+
+    def make_new_employee_id(self, num_of_chars: int) -> None:
         if self.employee:
             self.employee.make_new_employee_id(chars=num_of_chars)
         else:
@@ -274,7 +298,7 @@ class View(tk.Frame):
         # self.employee_lookup_entry.pack()
         self.employee_lookup_entry.grid(padx=10, pady=10)
 
-        self.employee_lookup_button = ttk.Button(self, command=self.employee_lookup, text='Submit')
+        self.employee_lookup_button = ttk.Button(self, command=self.employee_lookup, text='Search')
         # self.employee_lookup_button.pack()
         self.employee_lookup_button.grid(row=1, column=2, padx=5, pady=5)
         # self.employee_lookup_button.place(x=0, y=100)
@@ -287,7 +311,7 @@ class View(tk.Frame):
         self.add_new_employee_label.grid(padx=10, pady=10)
         self.add_new_employee_label.place(x=25, y=125)
         #
-        self.add_new_employee_button = ttk.Button(self, command=self.add_new_employee, text='Submit')
+        self.add_new_employee_button = ttk.Button(self, command=self.add_new_employee, text='Add Employee')
         # self.add_new_employee_button.place(x=0, y=100)
         # self.add_new_employee_button.pack()
         self.add_new_employee_button.grid(row=2, column=2, padx=10, pady=10)
@@ -307,9 +331,9 @@ class View(tk.Frame):
         self.current_employee_selected = tk.Listbox(self)
         self.current_employee_selected.grid(padx=10, pady=10)
 
-        self.add_new_hours_label = ttk.Label(text='Add New Hours')
-        self.add_new_hours_label.grid(padx=10, pady=10)
-        self.add_new_hours_label.place(x=25, y=350)
+        self.add_new_hourly_wage_label = ttk.Label(text='Hourly Wage')
+        self.add_new_hourly_wage_label.grid(padx=10, pady=10)
+        self.add_new_hourly_wage_label.place(x=25, y=350)
 
         self.add_new_hourly_wage_for_employee_entry = ttk.Entry(self)
         self.add_new_hourly_wage_for_employee_entry.grid(padx=10, pady=10)
@@ -317,7 +341,7 @@ class View(tk.Frame):
         self.add_new_hourly_wage_for_employee_button = ttk.Button(self, text='Submit', command=self.add_new_hourly_wage_for_employee)
         self.add_new_hourly_wage_for_employee_button.grid(padx=10, pady=10)
 
-        self.add_weekly_hours_label = ttk.Label(text='Add Weekly Hours')
+        self.add_weekly_hours_label = ttk.Label(text='Weekly Hours')
         self.add_weekly_hours_label.grid(padx=10, pady=10)
         self.add_weekly_hours_label.place(x=25, y=435)
 
@@ -337,6 +361,8 @@ class View(tk.Frame):
         self.weekly_pay_owed = tk.Listbox(self)
         self.weekly_pay_owed.grid(padx=10, pady=10)
 
+        ##TODO make a form to add new employee to system based on their information (name, email, postal code, address).
+
     def add_controller(self, controller: Controller):
         self.controller = controller
 
@@ -348,13 +374,13 @@ class View(tk.Frame):
 
     def add_new_employee(self):
         if self.controller:
-            self.controller.search_for_employee_click_event_handler()
+            self.controller.add_new_employee_click_event_handler()
         else:
             raise AttributeError(f'{self} does not have a controller')
 
     def add_new_hourly_wage_for_employee(self):
         if self.controller:
-            self.controller.add_weekly_hours_click_event_handler()
+            self.controller.add_new_hourly_wage_click_event_handler()
         else:
             raise AttributeError(f'{self} does not have a controller')
 
