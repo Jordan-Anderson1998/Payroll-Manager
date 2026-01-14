@@ -131,13 +131,13 @@ class PayrollHub:
         # os.chdir('..')
         os.chdir(database_path)
 
-        employee_info:list[tuple] = [
-            
-            (employee.name),
-            (employee.age),
-            (employee.employee_id),
-            (employee.email),
-            (employee.postal_code)
+        employee_info:list = [
+
+            employee.name,
+            employee.age,
+            employee.employee_id,
+            employee.email,
+            employee.postal_code
             
         ]
 

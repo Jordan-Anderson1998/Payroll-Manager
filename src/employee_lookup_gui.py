@@ -151,7 +151,7 @@ class Controller:
                 logger.debug(f'Employee found: {employee_check}')
                 self.employee = employee
                 view.current_employee_selected.insert(tk.END, employee_check)
-                messagebox.showinfo(message='Found employee {employee_check}')
+                messagebox.showinfo(message=f'Found employee {employee_check}')
                 self._found_employee = True
         else:
             logger.debug(f'Employee: {employee_check} not found in employee list: {hub.employee_list}')
@@ -262,11 +262,50 @@ class Controller:
         else:
             raise AttributeError(f'<self.employee> is not an attribute of {self} object \n Add employee before making employee ID.')
 
+
+    def submit_employee_info_click_event_handler(self) -> None:
+        """ Take all of the information from the entries for (name, age, email, postal code), make a new employee with
+            this information. Then add the employee to the hub (model).
+
+        Args:
+            arg1 (:obj:`type`): Positional parameter 1
+                desc
+            arg2 (:obj:`type`): keyword-only required argument
+
+        Returns:
+            (:obj)
+
+        Raises:
+            (:type)
+
+        Examples:
+              TODO Incomplete doctest
+              >>>pass
+              >>>pass
+        """
+
+        view = self.view
+        hub = self.model.hub
+
+        employee = Employee(name=str(view.name_entry.get()),
+                            age=int(view.age_entry.get()),
+                            email=str(view.email_entry.get()),
+                            postal_code=str(view.postal_code_entry.get()))
+
+        hub.add_employee(employee)
+        logger.info(f'Added employee with parameters: {employee.__dict__}')
+        messagebox.showinfo(message='Employee added')
+
+        # clear entries when information is submitted
+        view.name_entry.delete(0, tk.END)
+        view.age_entry.delete(0, tk.END)
+        view.email_entry.delete(0, tk.END)
+        view.postal_code_entry.delete(0, tk.END)
+
     def __str__(self):
         return 'Controller'
 
     def __repr__(self):
-
         return f'{self.model=}, {self.view=}, {self.employee=}'
 
 class View(tk.Frame):
@@ -361,7 +400,38 @@ class View(tk.Frame):
         self.weekly_pay_owed = tk.Listbox(self)
         self.weekly_pay_owed.grid(padx=10, pady=10)
 
-        ##TODO make a form to add new employee to system based on their information (name, email, postal code, address).
+        ##TODO make a form to add new employee to system based on their information (name, email, postal code, email).
+        self.name_label = ttk.Label(text='Name')
+        self.name_label.grid(row=0, column=3, padx=5, pady=5)
+        self.name_label.place(x=275, y=0)
+
+        self.name_entry = ttk.Entry(self)
+        self.name_entry.grid(row=0, column=3, padx=5, pady=5)
+
+        self.age_label = ttk.Label(text='Age')
+        self.age_label.grid(row=0, column=3, padx=5, pady=5)
+        self.age_label.place(x=450, y=0)
+
+        self.age_entry = ttk.Entry(self)
+        self.age_entry.grid(row=0, column=4, padx=5, pady=5)
+
+        self.email_label = ttk.Label(text='Email')
+        self.email_label.grid(row=0, column=3, padx=5, pady=5)
+        self.email_label.place(x=550, y=0)
+
+        self.email_entry = ttk.Entry(self)
+        self.email_entry.grid(row=0, column=5, padx=5, pady=5)
+
+        self.postal_code_label = ttk.Label(text='Postal Code')
+        self.postal_code_label.grid(row=0, column=3, padx=5, pady=5)
+        self.postal_code_label.place(x=700, y=0)
+
+        self.postal_code_entry = ttk.Entry(self)
+        self.postal_code_entry.grid(row=0, column=6, padx=5, pady=5)
+
+        self.submit_employee_info_form_button = ttk.Button(text='Submit Employee Info', command=self.submit_employee_info)
+        self.submit_employee_info_form_button.grid(row=0, column=3, padx=10, pady=10)
+        self.submit_employee_info_form_button.place(x=825, y=20)
 
     def add_controller(self, controller: Controller):
         self.controller = controller
@@ -395,6 +465,10 @@ class View(tk.Frame):
             self.controller.calculate_weekly_pay_click_event_handler()
         else:
             raise AttributeError(f'{self} does not have a controller')
+
+    def submit_employee_info(self) -> None:
+        if self.controller:
+            self.controller.submit_employee_info_click_event_handler()
 
     def __str__(self):
         return 'View'
