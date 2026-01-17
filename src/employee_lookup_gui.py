@@ -145,20 +145,38 @@ class Controller:
         employee_check = view.employee_lookup_entry.get()
         logger.debug(f'Searching for employee: {employee_check}')
 
-        for employee in hub.employee_list:
-            # if employee name is found in employee list
-            if employee_check in employee.name:
-                logger.debug(f'Employee found: {employee_check}')
-                self.employee = employee
-                view.current_employee_selected.insert(tk.END, employee_check)
-                messagebox.showinfo(message=f'Found employee {employee_check}')
-                self._found_employee = True
+        ##TODO bug
+
+        # if name exists in employee list
+        if employee_check in hub.employee_list[0].name:
+            logger.debug(f'Employee found: {employee_check}')
+            self.employee = hub.employee_list[0]
+            view.current_employee_selected.insert(tk.END, employee_check)
+            messagebox.showinfo(message=f'Found employee {employee_check}')
+            self._found_employee = True
+
         else:
             logger.debug(f'Employee: {employee_check} not found in employee list: {hub.employee_list}')
             view.current_employee_selected.insert(tk.END, f'Employee {employee_check} not found')
             # messagebox.showinfo('Employee Not Found')
             messagebox.showinfo(message=f'Employee {employee_check} not found')
             self._found_employee = False
+
+        # for employee in hub.employee_list:
+        #     # if employee name is found in employee list
+        #     logger.debug(f'employee check: {employee_check} employee name: {employee.name} employee _name: {employee._name}')
+        #     if employee_check in employee.name:
+        #         logger.debug(f'Employee found: {employee_check}')
+        #         self.employee = employee
+        #         view.current_employee_selected.insert(tk.END, employee_check)
+        #         messagebox.showinfo(message=f'Found employee {employee_check}')
+        #         self._found_employee = True
+        # else:
+        #     logger.debug(f'Employee: {employee_check} not found in employee list: {hub.employee_list}')
+        #     view.current_employee_selected.insert(tk.END, f'Employee {employee_check} not found')
+        #     # messagebox.showinfo('Employee Not Found')
+        #     messagebox.showinfo(message=f'Employee {employee_check} not found')
+        #     self._found_employee = False
 
     def add_new_employee_click_event_handler(self) -> None:
         """ Enable the button to add an employee if employee is found in records, else button is disabled.
@@ -287,11 +305,22 @@ class Controller:
         view = self.view
         hub = self.model.hub
 
+        ##TODO make an employee ID when initializing employee and submitting info
         employee = Employee(name=str(view.name_entry.get()),
                             age=int(view.age_entry.get()),
                             email=str(view.email_entry.get()),
                             postal_code=str(view.postal_code_entry.get()))
 
+        employee.make_new_employee_id(chars=10)
+
+        # TODO Bug:
+        """
+        Bug: Employee attributes are being added to employee list instead of an employee object
+        Getting:
+        ['Age': 27, 'Name': Jordan Anderson, 'Email': jordan@email.com, 'Postal Code': S4S 0A2]
+        Expecting:
+        [object: Employee]
+        """
         hub.add_employee(employee)
         logger.info(f'Added employee with parameters: {employee.__dict__}')
         messagebox.showinfo(message='Employee added')

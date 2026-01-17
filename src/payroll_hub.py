@@ -119,7 +119,13 @@ class PayrollHub:
         if employee in self.employee_list and employee.is_eligible_to_work():
             employee.payout = weekly_hours * hourly_wage
         else:
-            raise ValueError(f'Employee {employee.name} not found in employee list')
+            ##TODO BUG
+            if employee not in self.employee_list:
+                logger.debug(f'{employee.name} not in {self.employee_list}')
+                raise ValueError(f'Employee {employee.name} not found in employee list')
+            else:
+                logger.debug('Employee ID', employee.employee_id)
+                raise ValueError(f'Employee is not eligible to work, likely because they do not have an employee ID')
 
         return employee
 
