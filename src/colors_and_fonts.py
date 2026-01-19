@@ -5,7 +5,7 @@ __ALL__ = ['ButtonColor']
 class BaseColor(ABC):
 
     @abstractmethod
-    def color_scheme(self) -> dict:  # , primary: str, warning: str, danger: str, success: str
+    def make_color_scheme(self) -> dict:  # , primary: str, warning: str, danger: str, success: str
         """
         Args:
 
@@ -27,7 +27,7 @@ class ButtonColor(BaseColor):
         self.danger = danger
         self.success = success
 
-    def color_scheme(self) -> dict:
+    def make_color_scheme(self) -> dict:
         """ Implement a color scheme using CSS-style naming convention.
 
             primary (:obj:`str`):

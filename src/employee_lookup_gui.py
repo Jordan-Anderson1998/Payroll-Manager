@@ -4,6 +4,10 @@ from tkinter import messagebox
 import logging
 from logging import getLogger
 
+from pygments.styles.dracula import foreground
+
+# from pygments.styles.dracula import background
+
 from employee import Employee
 from payroll_hub import PayrollHub
 from colors_and_fonts import ButtonColor
@@ -119,6 +123,30 @@ class Controller:
         self._found_employee:bool = False
         self.employee:None|Employee = None
         self._minimum_wage:float = 15.0
+        self.button_color_scheme = ButtonColor(primary='#2ebed1', warning='#dbc925', danger='red', success='green')
+        self.button_color_scheme: dict = self.button_color_scheme.make_color_scheme()
+
+        # important NOTE for naming convention for tkinter style
+        """
+            When making style names the name MUST end in .TButton in order to work properly.
+            This is a common naming convention for tkinter widgets.
+            
+        """
+
+        self.style = ttk.Style()
+
+        # fixme | success color is working, but danger and warning are not
+        self.style.configure('Warn.TButton',
+                             background=self.button_color_scheme['Warning'],
+                        highlightbackground=self.button_color_scheme['Warning'],
+                             foreground=self.button_color_scheme['Warning'])
+        self.style.configure('Error.TButton',
+                             background=self.button_color_scheme['Danger'],
+                        highlightbackground=self.button_color_scheme['Danger'],
+                             foreground=self.button_color_scheme['Danger'])
+        self.style.configure('Success.TButton', background=self.button_color_scheme['Success'],
+                        highlightbackground=self.button_color_scheme['Success'],
+                        foreground=self.button_color_scheme['Success'])
 
     def search_for_employee_click_event_handler(self) -> None:
         """ Iterate through the employee list in the central hub and check input against the names in employee list.
@@ -155,6 +183,7 @@ class Controller:
             view.current_employee_selected.insert(tk.END, employee_check)
             messagebox.showinfo(message=f'Found employee {employee_check}')
             self._found_employee = True
+            view.employee_lookup_button.configure(style='Success.TButton')
 
         else:
             logger.debug(f'Employee: {employee_check} not found in employee list: {hub.employee_list}')
@@ -162,6 +191,8 @@ class Controller:
             # messagebox.showinfo('Employee Not Found')
             messagebox.showinfo(message=f'Employee {employee_check} not found')
             self._found_employee = False
+            view.employee_lookup_button.configure(style='Danger.TButton')
+
 
         # for employee in hub.employee_list:
         #     # if employee name is found in employee list
@@ -207,12 +238,14 @@ class Controller:
             logger.debug(f'Button state = {view.add_new_employee_button.state}')
             messagebox.showerror(message='Did not find employee')
             logger.info('Button to add employee is disabled because employee was not found.')
+            view.add_new_employee_button.configure(style='Danger.TButton')
         else:
             # hub.add_employee(view.current_employee_selected.get(tk.END))
             view.add_new_employee_button.state = tk.ACTIVE
             logger.debug(f'Button state = {view.add_new_employee_button.state}')
             messagebox.showinfo(message='Found employee')
             logger.info(f'Employee: {view.current_employee_selected.get(tk.END)} added to employee list')
+            view.add_new_employee_button.configure(style='Success.TButton')
 
     def add_new_hourly_wage_click_event_handler(self) -> None:
         employee = self.employee
@@ -222,9 +255,11 @@ class Controller:
             # add new field hourly wage
             employee.hourly_wage = int(view.add_new_hourly_wage_for_employee_entry.get())
             logger.info(f'Hourly wage: {employee.hourly_wage} added to employee: {employee.name}')
+            view.add_new_hourly_wage_for_employee_button.configure(style='Success.TButton')
         else:
             logger.info('Employee not found in employee list')
             messagebox.showerror(message='No employee found')
+            view.add_new_hourly_wage_for_employee_button.configure(style='Danger.TButton')
 
     def add_weekly_hours_click_event_handler(self) -> None:
         """ If employee is found in records, add a new attribute to employee 'hours' that contains the hours inputted.
@@ -253,9 +288,11 @@ class Controller:
             # add new field hours to employee
             employee.hours = int(view.add_weekly_hours_for_employee_entry.get())
             logger.info(f'Hours: {employee.hours} added to employee: {employee.name}')
+            view.add_weekly_hours_for_employee_button.configure(style='Success.TButton')
         else:
             logger.info(f'Employee not found')
             messagebox.showerror(message='No employee found')
+            view.add_weekly_hours_for_employee_button.configure(style='Danger.TButton')
 
     def calculate_weekly_pay_click_event_handler(self):
         employee = self.employee
@@ -266,14 +303,17 @@ class Controller:
             try:
                 employee_with_pay = hub.calculate_payroll(employee, employee.hours, employee.hourly_wage)
                 view.weekly_pay_owed.insert(tk.END, str(employee_with_pay.payout))
+                view.calculate_weekly_pay_button.configure(style='Success.TButton')
             except AttributeError:
                 # if employee hours or employee hourly_wage does not exist
                 logger.warning(f'{employee.name} does not have their hours in the system yet or is not eligible for pay \n employee might not have an employee ID.')
                 logger.debug(f'{employee.name} eligible to work: {employee.is_eligible_to_work()}')
+                view.calculate_weekly_pay_button.configure(style='Warning.TButton')
 
         else:
             logger.info(f'employee not found')
             messagebox.showerror(message='No employee found')
+            view.calculate_weekly_pay_button.configure(style='Danger.TButton')
 
     def make_new_employee_id(self, num_of_chars: int) -> None:
         if self.employee:
@@ -332,6 +372,9 @@ class Controller:
         view.email_entry.delete(0, tk.END)
         view.postal_code_entry.delete(0, tk.END)
 
+        # change button color to success
+        view.submit_employee_info_form_button.configure(style='Success.TButton')
+
     def __str__(self):
         return 'Controller'
 
@@ -342,6 +385,9 @@ class View(tk.Frame):
 
     def __init__(self, parent):
         super().__init__(parent)
+
+        self.color_scheme = ButtonColor(primary='#2ebed1', warning='#dbc925', danger='red', success='green')
+        self.button_color_scheme:dict = self.color_scheme.make_color_scheme()
 
         """
         Possible layout:
@@ -367,7 +413,10 @@ class View(tk.Frame):
         # self.employee_lookup_entry.pack()
         self.employee_lookup_entry.grid(padx=10, pady=10)
 
-        self.employee_lookup_button = ttk.Button(self, command=self.employee_lookup, text='Search')
+        self.style = ttk.Style()
+        self.style.configure('My.TButton', foreground='black', highlightbackground=self.button_color_scheme['Primary'], background=self.button_color_scheme['Primary'])
+
+        self.employee_lookup_button = ttk.Button(self, command=self.employee_lookup, text='Search', style='My.TButton')
         # self.employee_lookup_button.pack()
         self.employee_lookup_button.grid(row=1, column=2, padx=5, pady=5)
         # self.employee_lookup_button.place(x=0, y=100)
@@ -380,7 +429,7 @@ class View(tk.Frame):
         self.add_new_employee_label.grid(padx=10, pady=10)
         self.add_new_employee_label.place(x=25, y=125)
         #
-        self.add_new_employee_button = ttk.Button(self, command=self.add_new_employee, text='Add Employee')
+        self.add_new_employee_button = ttk.Button(self, command=self.add_new_employee, text='Add Employee', style='My.TButton')
         # self.add_new_employee_button.place(x=0, y=100)
         # self.add_new_employee_button.pack()
         self.add_new_employee_button.grid(row=2, column=2, padx=10, pady=10)
@@ -407,7 +456,7 @@ class View(tk.Frame):
         self.add_new_hourly_wage_for_employee_entry = ttk.Entry(self)
         self.add_new_hourly_wage_for_employee_entry.grid(padx=10, pady=10)
 
-        self.add_new_hourly_wage_for_employee_button = ttk.Button(self, text='Submit', command=self.add_new_hourly_wage_for_employee)
+        self.add_new_hourly_wage_for_employee_button = ttk.Button(self, text='Submit', command=self.add_new_hourly_wage_for_employee, style='My.TButton')
         self.add_new_hourly_wage_for_employee_button.grid(padx=10, pady=10)
 
         self.add_weekly_hours_label = ttk.Label(text='Weekly Hours')
@@ -417,14 +466,14 @@ class View(tk.Frame):
         self.add_weekly_hours_for_employee_entry = ttk.Entry(self)
         self.add_weekly_hours_for_employee_entry.grid(padx=10, pady=10)
 
-        self.add_weekly_hours_for_employee_button = ttk.Button(self, command=self.add_weekly_hours_for_employee, text='Submit')
+        self.add_weekly_hours_for_employee_button = ttk.Button(self, command=self.add_weekly_hours_for_employee, text='Submit', style='My.TButton')
         self.add_weekly_hours_for_employee_button.grid(padx=10, pady=10)
 
         self.calculate_weekly_pay_label = ttk.Label(text='Calculate Weekly Pay')
         self.calculate_weekly_pay_label.grid(padx=10, pady=10)
         self.calculate_weekly_pay_label.place(x=25, y=520)
 
-        self.calculate_weekly_pay_button = ttk.Button(self, command=self.calculate_weekly_pay, text='Submit')
+        self.calculate_weekly_pay_button = ttk.Button(self, command=self.calculate_weekly_pay, text='Submit', style='My.TButton')
         self.calculate_weekly_pay_button.grid(padx=10, pady=10)
 
         self.weekly_pay_owed = tk.Listbox(self)
@@ -459,7 +508,7 @@ class View(tk.Frame):
         self.postal_code_entry = ttk.Entry(self)
         self.postal_code_entry.grid(row=0, column=6, padx=5, pady=5)
 
-        self.submit_employee_info_form_button = ttk.Button(text='Submit Employee Info', command=self.submit_employee_info)
+        self.submit_employee_info_form_button = ttk.Button(text='Submit Employee Info', command=self.submit_employee_info, style='My.TButton')
         self.submit_employee_info_form_button.grid(row=0, column=3, padx=10, pady=10)
         self.submit_employee_info_form_button.place(x=825, y=20)
 
