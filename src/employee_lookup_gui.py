@@ -7,6 +7,7 @@ from logging import getLogger
 from employee import Employee
 from payroll_hub import PayrollHub
 from colors_and_fonts import ButtonColor
+from tools.decorators.deco import output_formatter
 
 """
 NOTSET 0 
@@ -298,9 +299,26 @@ class Controller:
             messagebox.showerror(message="No employee found")
             view.add_weekly_hours_for_employee_button.configure(style="Danger.TButton")
 
-    def calculate_weekly_pay_click_event_handler(self):
-        employee = self.employee
+    @output_formatter('$', True)
+    def employee_payout(self) -> str|None:
+        """ Calculate employee payout and convert to string.
+
+        Args:
+            arg1 (:obj:`type`): Positional parameter 1
+                desc
+            arg2 (:obj:`type`): keyword-only required argument
+
+        Returns:
+            (:str)
+
+        Raises:
+            (:AttributeError)
+
+        Examples:
+
+        """
         hub = self.model.hub
+        employee = self.employee
         view = self.view
 
         if self._found_employee:
@@ -308,8 +326,8 @@ class Controller:
                 employee_with_pay = hub.calculate_payroll(
                     employee, employee.hours, employee.hourly_wage
                 )
-                view.weekly_pay_owed.insert(tk.END, str(employee_with_pay.payout))
-                view.calculate_weekly_pay_button.configure(style="Success.TButton")
+                return str(employee_with_pay.payout)
+
             except AttributeError:
                 # if employee hours or employee hourly_wage does not exist
                 logger.warning(
@@ -324,6 +342,30 @@ class Controller:
             logger.info("employee not found")
             messagebox.showerror(message="No employee found")
             view.calculate_weekly_pay_button.configure(style="Danger.TButton")
+            raise AttributeError('No Employee found')
+
+    def calculate_weekly_pay_click_event_handler(self):
+
+        """ Insert employee payout into list output
+
+        Args:
+            arg1 (:obj:`type`): Positional parameter 1
+                desc
+            arg2 (:obj:`type`): keyword-only required argument
+
+        Returns:
+            (:obj)
+
+        Raises:
+            (:type)
+
+        Examples:
+        """
+
+        view = self.view
+
+        view.weekly_pay_owed.insert(tk.END, self.employee_payout())
+        view.calculate_weekly_pay_button.configure(style="Success.TButton")
 
     def make_new_employee_id(self, num_of_chars: int) -> None:
         if self.employee:

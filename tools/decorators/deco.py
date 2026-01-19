@@ -1,10 +1,13 @@
 from typing import Callable, Any
+from functools import wraps
 
 # decorator to transform output for functions that return a string
 def output_transformer(transformer: Any):
 
+    @wraps(transformer)
     def decorator(func: Callable) -> Callable:
 
+        @wraps(func)
         def wrapper(*args, **kwargs):
             nonlocal transformer
 
@@ -18,6 +21,7 @@ def output_formatter(symbol: str, before: bool):
 
     def decorator(func: Callable) -> Callable:
 
+        @wraps(func)
         def wrapper(*args, **kwargs):
             nonlocal symbol
 
@@ -29,4 +33,3 @@ def output_formatter(symbol: str, before: bool):
         return wrapper
 
     return decorator
-
