@@ -375,6 +375,11 @@ class Controller:
                 f"<self.employee> is not an attribute of {self} object \n Add employee before making employee ID."
             )
 
+    @staticmethod
+    def delete_entries(entries: list[ttk.Entry]) -> None:
+        for entry in entries:
+            entry.delete(0, tk.END)
+
     def submit_employee_info_click_event_handler(self) -> None:
         """Take all of the information from the entries for (name, age, email, postal code), make a new employee with
             this information. Then add the employee to the hub (model).
@@ -409,7 +414,6 @@ class Controller:
 
         employee.make_new_employee_id(chars=10)
 
-        # TODO Bug:
         """
         Bug: Employee attributes are being added to employee list instead of an employee object
         Getting:
@@ -422,10 +426,13 @@ class Controller:
         messagebox.showinfo(message="Employee added")
 
         # clear entries when information is submitted
-        view.name_entry.delete(0, tk.END)
-        view.age_entry.delete(0, tk.END)
-        view.email_entry.delete(0, tk.END)
-        view.postal_code_entry.delete(0, tk.END)
+        self.delete_entries([view.name_entry, view.age_entry, view.email_entry, view.postal_code_entry])
+
+        #fixme use extract refactoring technique to move the delete entries into a separate function
+        # view.name_entry.delete(0, tk.END)
+        # view.age_entry.delete(0, tk.END)
+        # view.email_entry.delete(0, tk.END)
+        # view.postal_code_entry.delete(0, tk.END)
 
         # change button color to success
         view.submit_employee_info_form_button.configure(style="Success.TButton")
