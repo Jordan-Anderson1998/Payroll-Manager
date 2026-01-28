@@ -2,7 +2,7 @@ from typing import Callable, Any
 from functools import wraps
 
 # decorator to transform output for functions that return a string
-def output_transformer(transformer: Any):
+def output_transformer(transformer: Callable):
 
     @wraps(transformer)
     def decorator(func: Callable) -> Callable:

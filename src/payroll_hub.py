@@ -68,6 +68,21 @@ A serious error, indicating that the program itself may be unable to continue ru
 | **`%(exc_text)s`**        | Text form of exception (generated automatically)   |
 """
 
+"""
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+
+class Base(DeclarativeBase):
+    pass
+
+class User(Base):
+    __tablename__ = "users"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str]
+
+
+"""
+
+
 # All constants and controls for logging system should be controlled here
 
 logger = getLogger(__name__)
@@ -97,9 +112,6 @@ ERROR
 CRITICAL
 
 """
-
-
-
 
 class PayrollHub:
     def __init__(self):
