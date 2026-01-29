@@ -1,11 +1,15 @@
 from abc import ABC, abstractmethod
+from typing import Protocol, runtime_checkable
+from collections.abc import Sequence
 
 __ALL__ = ['ButtonColor']
 
-class BaseColor(ABC):
+#todo implement protocol instead of abc
+class BaseColor(Protocol):
 
-    @abstractmethod
-    def make_color_scheme(self) -> dict:  # , primary: str, warning: str, danger: str, success: str
+    # @abstractmethod
+    def make_color_scheme(self) -> dict:
+        ...  # , primary: str, warning: str, danger: str, success: str
         """
         Args:
 
@@ -16,7 +20,7 @@ class BaseColor(ABC):
             (:NotImplementedError)
 
         """
-        raise NotImplementedError
+        # raise NotImplementedError
 
 
 class ButtonColor(BaseColor):
@@ -54,3 +58,35 @@ class ButtonColor(BaseColor):
                 'Danger': self.danger,
                 'Success': self.success
                 }
+
+from typing import Protocol
+
+@runtime_checkable
+class Speaker(Protocol):
+    def speak(self) -> str:
+        ...
+
+class Dog:
+    def speak(self) -> str:
+        return "Woof"
+
+class Person:
+    def speak(self) -> str:
+        return "Hello"
+
+from collections.abc import Sequence
+
+class Dummy(Sequence):
+
+    def __getitem__(self, item):
+        ...
+
+
+# j = Dummy()
+#
+# print(j[3])  # This will call __getitem__
+
+
+
+
+

@@ -114,6 +114,7 @@ names:list[str] = [
     ,'Graham', 'Emmanuel', 'Isa', 'Jeremiah', 'Wong', 'Chung'
 ]
 
+#TODO could be protocol?
 class Enforcer(ABC):
 
     def __set_name__(self, owner, name):
